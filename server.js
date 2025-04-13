@@ -12,14 +12,25 @@ import { verifyToken } from "./src/middleware/auth.js";
 dotenv.config();
 const app = express();
 
-const corsOrigin = ["http://localhost:3033"];
+// Allow requests from your local frontend and from Vercel
+const allowedOrigins = [
+  "http://localhost:3033",
+  "https://decor-fgiorkeul-saiprasad8955s-projects.vercel.app",
+];
 
-const corsOptions = {
-  origin: corsOrigin,
-  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-};
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true, // Only needed if you're using cookies/auth headers
+  })
+);
 
-app.use(cors(corsOptions));
 app.use(express.json());
 
 // Connect to MongoDB
