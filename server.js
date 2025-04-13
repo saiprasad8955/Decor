@@ -12,7 +12,14 @@ import { verifyToken } from "./src/middleware/auth.js";
 dotenv.config();
 const app = express();
 
-app.use(cors());
+const corsOrigin = ["http://localhost:3033"];
+
+const corsOptions = {
+  origin: corsOrigin,
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // Connect to MongoDB
