@@ -3,11 +3,11 @@ import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
-import itemRoutes from "./routes/itemRoutes.js";
-import invoiceRoutes from "./routes/invoiceRoutes.js";
-import customerRoutes from "./routes/customerRoutes.js"
-import authRoutes from "./routes/authRoutes.js"
-import { verifyToken } from "./middleware/auth.js";
+import itemRoutes from "./src/routes/itemRoutes.js";
+import invoiceRoutes from "./src/routes/invoiceRoutes.js";
+import customerRoutes from "./src/routes/customerRoutes.js"
+import authRoutes from "./src/routes/authRoutes.js"
+import { verifyToken } from "./src/middleware/auth.js";
 
 dotenv.config();
 const app = express();

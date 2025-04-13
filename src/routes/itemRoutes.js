@@ -1,4 +1,3 @@
-
 // File: routes/itemRoutes.js
 import express from "express";
 import Item from "../models/item.js";
@@ -16,7 +15,9 @@ router.post("/add", async (req, res) => {
 });
 
 router.put("/update/:id", async (req, res) => {
-  const updatedItem = await Item.findByIdAndUpdate(req.params.id, req.body, { new: true });
+  const updatedItem = await Item.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+  });
   res.json(updatedItem);
 });
 
@@ -26,4 +27,3 @@ router.delete("/delete/:id", async (req, res) => {
 });
 
 export default router;
-
