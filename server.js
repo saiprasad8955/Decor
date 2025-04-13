@@ -41,12 +41,14 @@ mongoose
 
 // Routes
 app.use("/auth", authRoutes);
-app.use("/items", verifyToken, itemRoutes);
-app.use("/customers", verifyToken, customerRoutes);
-app.use("/invoices", verifyToken, invoiceRoutes);
-app.get("/", (req, res) => {
-  res.json({ msg: "hello its working!!" });
+
+app.use("/user/me", verifyToken, (req, res) => {
+  res.json({ user: req.user });
 });
+
+app.use("/item", verifyToken, itemRoutes);
+app.use("/customer", verifyToken, customerRoutes);
+app.use("/invoice", verifyToken, invoiceRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
