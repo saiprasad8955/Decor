@@ -21,6 +21,7 @@ mongoose.connect(process.env.MONGO_URI)
 
 
 // Routes
+app.use("/api/auth", authRoutes);
 app.use("/items", verifyToken, itemRoutes);
 app.use("/customers", verifyToken, customerRoutes);
 app.use("/invoices", verifyToken, invoiceRoutes);
