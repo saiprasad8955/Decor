@@ -1,4 +1,3 @@
-
 // File: models/Item.js
 import mongoose from "mongoose";
 
@@ -16,6 +15,7 @@ const itemSchema = new mongoose.Schema({
   selling_price: Number,
   sold_quantity: { type: Number, default: 0 },
   remaining_quantity: { type: Number, default: 0 },
+  isDeleted: { type: Boolean, default: false },
 });
 
 export default mongoose.model("Item", itemSchema);
