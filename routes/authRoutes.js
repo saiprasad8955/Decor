@@ -5,6 +5,10 @@ import User from "../models/user.js";
 
 const router = express.Router();
 
+router.get("/me", (req, res) => {
+  res.json({data: {user: req.user}});
+});
+
 router.post("/register", async (req, res) => {
   try {
     const user = new User(req.body);
@@ -22,7 +26,7 @@ router.post("/login", async (req, res) => {
     return res.status(401).json({ error: "Invalid credentials" });
   }
   const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "1d" });
-  res.json({ token });
+  res.json({ data: { accessToken: token, user} });
 });
 
 export default router;
