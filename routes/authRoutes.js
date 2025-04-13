@@ -16,8 +16,8 @@ router.post("/register", async (req, res) => {
 });
 
 router.post("/login", async (req, res) => {
-  const { username, password } = req.body;
-  const user = await User.findOne({ username });
+  const { email, password } = req.body;
+  const user = await User.findOne({ email });
   if (!user || !(await user.comparePassword(password))) {
     return res.status(401).json({ error: "Invalid credentials" });
   }
