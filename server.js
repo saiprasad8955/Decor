@@ -6,6 +6,7 @@ import cors from "cors";
 import itemRoutes from "./routes/itemRoutes.js";
 import invoiceRoutes from "./routes/invoiceRoutes.js";
 import customerRoutes from "./routes/customerRoutes.js"
+import authRoutes from "./routes/authRoutes.js"
 import { verifyToken } from "./middleware/auth.js";
 
 dotenv.config();
