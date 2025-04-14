@@ -21,7 +21,7 @@ const app = express();
 // Allow requests from your local frontend and from Vercel
 const allowedOrigins = [
   "http://localhost:3033",
-  "https://decor-pdu8pdld4-saiprasad8955s-projects.vercel.app/",
+  "https://decor-nu.vercel.app/",
 ];
 
 app.use(
