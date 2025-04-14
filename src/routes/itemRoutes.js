@@ -22,7 +22,6 @@ router.post("/add", async (req, res) => {
 router.put("/update/:id", async (req, res) => {
   try {
     const itemId = req.params.id;
-    console.log("🚀 ~ router.put ~ itemId:", itemId);
 
     if (Object.keys(req.body).length === 0) {
       return res.json({ error: "Please enter data to update!" });
@@ -78,7 +77,6 @@ router.put("/update/:id", async (req, res) => {
       },
       { new: true }
     );
-    console.log("🚀 ~ router.put ~ updatedItem:", updatedItem);
 
     if (!updatedItem) {
       return res.json({ error: "Item not found!" });

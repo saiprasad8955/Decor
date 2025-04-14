@@ -1,13 +1,19 @@
 // File: server.js
 import express from "express";
 import mongoose from "mongoose";
+import { fileURLToPath } from "url";
 import dotenv from "dotenv";
 import cors from "cors";
+import path from "path";
 import itemRoutes from "./src/routes/itemRoutes.js";
 import invoiceRoutes from "./src/routes/invoiceRoutes.js";
 import customerRoutes from "./src/routes/customerRoutes.js";
 import authRoutes from "./src/routes/authRoutes.js";
 import { verifyToken } from "./src/middleware/auth.js";
+
+// 👇 Get __dirname equivalent
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 dotenv.config();
 const app = express();
@@ -38,6 +44,12 @@ mongoose
   .connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB connected"))
   .catch((err) => console.error("MongoDB connection error:", err));
+
+// For static website
+app.use(express.static(path.resolve(__dirname, "client/build")));
+app.get("/client", function (req, res) {
+  res.sendFile(path.resolve(__dirname, "client/build/index.html"));
+});
 
 // Routes
 app.use("/auth", authRoutes);
