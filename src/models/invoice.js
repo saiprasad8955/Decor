@@ -1,11 +1,5 @@
-
 // File: models/Invoice.js
 import mongoose from "mongoose";
-
-const discountSchema = new mongoose.Schema({
-  type: String,
-  value: Number,
-});
 
 const invoiceSchema = new mongoose.Schema({
   customerId: { type: mongoose.Schema.Types.ObjectId, ref: "Customer" },
@@ -13,17 +7,19 @@ const invoiceSchema = new mongoose.Schema({
   invoice_date: Date,
   delivery_date: Date,
   description: String,
-  items: [{
-    item: { type: mongoose.Schema.Types.ObjectId, ref: "Item" },
-    quantity: Number,
-    rate: Number,
-    tax: Number,
-    total: Number
-  }],
-  discount: discountSchema,
+  items: [
+    {
+      item: { type: mongoose.Schema.Types.ObjectId, ref: "Item" },
+      quantity: Number,
+      rate: Number,
+      tax: Number,
+      total: Number,
+    },
+  ],
+  discount: Number,
   subtotal: Number,
   final_amount: Number,
+  isDeleted: { type: Boolean, defaultL: false },
 });
 
 export default mongoose.model("Invoice", invoiceSchema);
-
