@@ -19,7 +19,7 @@ const invoiceSchema = new mongoose.Schema({
   discount: Number,
   subtotal: Number,
   final_amount: Number,
-  isDeleted: { type: Boolean, defaultL: false },
+  isDeleted: { type: Boolean, default: false },
 });
 
 export default mongoose.model("Invoice", invoiceSchema);
