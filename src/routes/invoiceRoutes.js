@@ -4,7 +4,10 @@ import Invoice from "../models/invoice.js";
 const router = express.Router();
 
 router.get("/list", async (req, res) => {
-  const invoices = await Invoice.find({isDeleted:false}).populate("customerId items.item");
+  const invoices = await Invoice.find({ isDeleted: false }).populate(
+    "customerId items.item"
+  );
+  console.log("🚀 ~ router.get ~ invoices:", invoices)
   res.json(invoices);
 });
 
@@ -32,7 +35,7 @@ router.put("/update/:id", async (req, res) => {
       { _id: invoice._id },
       { $set: req.body },
       { new: true }
-    ).populate('customerId');
+    ).populate("customerId");
 
     res.status(200).json(newInvoice);
   } catch (error) {

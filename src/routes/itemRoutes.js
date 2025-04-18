@@ -5,7 +5,7 @@ const router = express.Router();
 
 router.get("/list", async (req, res) => {
   const items = await Item.find({ isDeleted: false });
-  res.json(items);
+  res.status(200).json(items);
 });
 
 router.post("/add", async (req, res) => {
@@ -82,7 +82,7 @@ router.put("/update/:id", async (req, res) => {
       return res.json({ error: "Item not found!" });
     }
 
-    res.json(updatedItem);
+    res.status(200).json(updatedItem);
   } catch (error) {
     console.error("Error updating item:", error);
     res.status(500).json({ error: error.message });
@@ -104,7 +104,7 @@ router.delete("/delete/:id", async (req, res) => {
       return res.json({ error: "Item not found or may be deleted." });
     }
 
-    res.json({ message: "Item deleted" });
+    res.status(200).json({ message: "Item deleted" });
   } catch (error) {
     console.error("Error deleting item:", error);
     res.status(500).json({ error: error.message });
