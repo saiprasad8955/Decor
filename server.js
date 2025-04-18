@@ -39,8 +39,6 @@ mongoose
   .then(() => console.log("MongoDB connected"))
   .catch((err) => console.error("MongoDB connection error:", err));
 
-
-
 // Routes
 app.use("/auth", authRoutes);
 
@@ -54,7 +52,7 @@ app.use("/invoice", verifyToken, invoiceRoutes);
 
 // For static website
 app.use(express.static(path.resolve(__dirname, "client/build")));
-app.get("/*", function (req, res) {
+app.get("/client", function (req, res) {
   res.sendFile(path.resolve(__dirname, "client/build/index.html"));
 });
 
