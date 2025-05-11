@@ -11,7 +11,8 @@ router.get("/list", async (req, res) => {
 
 router.post("/add", async (req, res) => {
   try {
-    const newItem = new Item(req.body);
+    const item = { ...req.body, remaining_quantity: req.body.quantity };
+    const newItem = new Item(item);
     await newItem.save();
     res.status(201).json(newItem);
   } catch (error) {
@@ -40,7 +41,25 @@ router.put("/update/:id", async (req, res) => {
       tax,
       cost_price,
       selling_price,
+      quantity,
+      sold_quantity,
     } = req.body;
+
+    const itemInDb = await Item.findById(itemId);
+    if (!itemInDb) {
+      return res.json({ error: "Item not found!" });
+    }
+
+    if (quantity < itemInDb.sold_quantity) {
+      return res
+        .status(400)
+        .json({ error: "Quantity cannot be less than sold quantity!" });
+    }
+
+    let remaining_quantity = itemInDb.remaining_quantity;
+    if (itemInDb.quantity != quantity) {
+      remaining_quantity = quantity - itemInDb.sold_quantity;
+    }
 
     if (
       !item_name ||
@@ -52,7 +71,8 @@ router.put("/update/:id", async (req, res) => {
       !brand_name ||
       !tax ||
       !cost_price ||
-      !selling_price
+      !selling_price ||
+      !quantity
     ) {
       return res
         .status(400)
@@ -74,6 +94,8 @@ router.put("/update/:id", async (req, res) => {
           tax,
           cost_price,
           selling_price,
+          remaining_quantity,
+          quantity,
         },
       },
       { new: true }
@@ -89,6 +111,7 @@ router.put("/update/:id", async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+     
 
 router.delete("/delete/:id", async (req, res) => {
   try {
@@ -112,4 +135,4 @@ router.delete("/delete/:id", async (req, res) => {
   }
 });
 
-module.exports = router
+module.exports = router;

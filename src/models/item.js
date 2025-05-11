@@ -13,6 +13,7 @@ const itemSchema = new mongoose.Schema({
   tax: { type: Number, min: 1, max: 99 },
   cost_price: Number,
   selling_price: Number,
+  quantity: { type: Number, default: 0 },
   sold_quantity: { type: Number, default: 0 },
   remaining_quantity: { type: Number, default: 0 },
   isDeleted: { type: Boolean, default: false },
