@@ -4,6 +4,13 @@ const Item = require("../models/item");  // Import Item model
 
 const router = express.Router();
 
+router.get("/list", async (req, res) => {
+  const invoices = await Invoice.find({ isDeleted: false }).populate(
+    "customerId items.item"
+  );
+  res.json(invoices);
+});
+
 router.post("/add", async (req, res) => {
   try {
     const invoice = new Invoice(req.body);
