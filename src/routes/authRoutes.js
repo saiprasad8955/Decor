@@ -1,7 +1,7 @@
 // File: routes/authRoutes.js
-import express from "express";
-import jwt from "jsonwebtoken";
-import User from "../models/user.js";
+const express = require("express");
+const jwt = require("jsonwebtoken");
+const User = require("../models/user");
 
 const router = express.Router();
 
@@ -29,4 +29,4 @@ router.post("/login", async (req, res) => {
   res.json({ accessToken: token, user });
 });
 
-export default router;
+module.exports = router

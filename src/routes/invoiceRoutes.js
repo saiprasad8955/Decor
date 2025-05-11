@@ -1,20 +1,30 @@
-// File: routes/invoiceRoutes.js
-import express from "express";
-import Invoice from "../models/invoice.js";
+const express = require("express");
+const Invoice = require("../models/invoice");
+const Item = require("../models/item");  // Import Item model
+
 const router = express.Router();
 
-router.get("/list", async (req, res) => {
-  const invoices = await Invoice.find({ isDeleted: false }).populate(
-    "customerId items.item"
-  );
-  console.log("🚀 ~ router.get ~ invoices:", invoices)
-  res.json(invoices);
-});
-
 router.post("/add", async (req, res) => {
-  const invoice = new Invoice(req.body);
-  await invoice.save();
-  res.status(201).json(invoice);
+  try {
+    const invoice = new Invoice(req.body);
+    
+    await invoice.save();
+
+    for (const item of invoice.items) {
+      const itemInDb = await Item.findById(item.item);
+      if (itemInDb) {
+        itemInDb.sold_quantity += item.quantity;
+        itemInDb.remaining_quantity -= item.quantity;
+
+        await itemInDb.save();
+      }
+    }
+
+    res.status(201).json(invoice);
+  } catch (error) {
+    console.error("Error adding invoice:", error);
+    res.status(500).json({ error: error.message });
+  }
 });
 
 router.put("/update/:id", async (req, res) => {
@@ -26,43 +36,58 @@ router.put("/update/:id", async (req, res) => {
     }
 
     const invoice = await Invoice.findById(invoiceId);
-
     if (!invoice) {
       return res.json({ error: "Invoice not found!" });
     }
 
-    const newInvoice = await Invoice.findOneAndUpdate(
+    const updatedInvoice = await Invoice.findOneAndUpdate(
       { _id: invoice._id },
       { $set: req.body },
       { new: true }
     ).populate("customerId");
 
-    res.status(200).json(newInvoice);
+    for (const item of updatedInvoice.items) {
+      const itemInDb = await Item.findById(item.item);
+      if (itemInDb) {
+        itemInDb.sold_quantity += item.quantity;
+        itemInDb.remaining_quantity -= item.quantity;
+
+        await itemInDb.save();
+      }
+    }
+
+    res.status(200).json(updatedInvoice);
   } catch (error) {
     console.error("Error updating invoice:", error);
     res.status(500).json({ error: error.message });
   }
 });
 
-// DELETE /customer/delete/:id
 router.delete("/delete/:id", async (req, res) => {
   const invoiceId = req.params.id;
   try {
-    const invoice = await Invoice.findByIdAndUpdate(
-      { _id: invoiceId },
-      {
-        $set: { isDeleted: true },
-      },
-      { new: true }
-    );
-
+    const invoice = await Invoice.findById(invoiceId);
     if (!invoice) {
       return res.status(404).json({ error: "Invoice not found!" });
     }
+
+    await Invoice.findByIdAndUpdate(invoiceId, { $set: { isDeleted: true } }, { new: true });
+
+    for (const item of invoice.items) {
+      const itemInDb = await Item.findById(item.item);
+      if (itemInDb) {
+        itemInDb.sold_quantity -= item.quantity;
+        itemInDb.remaining_quantity += item.quantity;
+
+        await itemInDb.save();
+      }
+    }
+
     res.status(200).json({ message: "Invoice deleted successfully." });
   } catch (error) {
     console.error("Error deleting invoice:", error);
     res.status(500).json({ error: error.message });
   }
 });
-export default router;
+
+module.exports = router;

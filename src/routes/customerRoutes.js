@@ -1,6 +1,6 @@
 // File: routes/customerRoutes.js
-import express from "express";
-import Customer from "../models/customer.js";
+const express = require("express");
+const Customer = require("../models/customer");
 const router = express.Router();
 
 router.get("/list", async (req, res) => {
@@ -69,4 +69,4 @@ router.delete("/delete/:id", async (req, res) => {
   }
 });
 
-export default router;
+module.exports = router

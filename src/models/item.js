@@ -1,5 +1,5 @@
 // File: models/Item.js
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
 
 const itemSchema = new mongoose.Schema({
   item_name: { type: String, required: true },
@@ -18,4 +18,5 @@ const itemSchema = new mongoose.Schema({
   isDeleted: { type: Boolean, default: false },
 });
 
-export default mongoose.model("Item", itemSchema);
+module.exports = mongoose.model('Item', itemSchema);
+

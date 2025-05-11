@@ -1,6 +1,7 @@
 // File: routes/itemRoutes.js
-import express from "express";
-import Item from "../models/item.js";
+const express = require("express");
+const Item = require("../models/item");
+
 const router = express.Router();
 
 router.get("/list", async (req, res) => {
@@ -111,4 +112,4 @@ router.delete("/delete/:id", async (req, res) => {
   }
 });
 
-export default router;
+module.exports = router

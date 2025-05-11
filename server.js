@@ -1,19 +1,14 @@
 // File: server.js
-import express from "express";
-import mongoose from "mongoose";
-import { fileURLToPath } from "url";
-import dotenv from "dotenv";
-import cors from "cors";
-import path from "path";
-import itemRoutes from "./src/routes/itemRoutes.js";
-import invoiceRoutes from "./src/routes/invoiceRoutes.js";
-import customerRoutes from "./src/routes/customerRoutes.js";
-import authRoutes from "./src/routes/authRoutes.js";
-import { verifyToken } from "./src/middleware/auth.js";
-
-// 👇 Get __dirname equivalent
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const express = require("express");
+const mongoose = require("mongoose");
+const dotenv = require("dotenv");
+const cors = require("cors");
+const path = require("path");
+const itemRoutes = require("./src/routes/itemRoutes");
+const invoiceRoutes = require("./src/routes/invoiceRoutes");
+const customerRoutes = require("./src/routes/customerRoutes");
+const authRoutes = require("./src/routes/authRoutes");
+const { verifyToken } = require("./src/middleware/auth");
 
 dotenv.config();
 const app = express();
@@ -51,9 +46,9 @@ app.use("/customer", verifyToken, customerRoutes);
 app.use("/invoice", verifyToken, invoiceRoutes);
 
 // For static website
-app.use(express.static(path.resolve(__dirname, "client/build")));
+app.use(express.static(path.resolve(path.dirname(__filename), "client/build")));
 app.get("/client", function (req, res) {
-  res.sendFile(path.resolve(__dirname, "client/build/index.html"));
+  res.sendFile(path.resolve(path.dirname(__filename), "client/build/index.html"));
 });
 
 const PORT = process.env.PORT || 3000;
