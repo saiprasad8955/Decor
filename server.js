@@ -46,7 +46,7 @@ app.use("/customer", verifyToken, customerRoutes);
 app.use("/invoice", verifyToken, invoiceRoutes);
 
 app.use(express.static(path.resolve(path.dirname(__filename), "client/build")));
-app.get("/*", function (req, res) {
+app.get("/", function (req, res) {
   res.sendFile(path.resolve(path.dirname(__filename), "client/build/index.html"));
 });
 // For static website
