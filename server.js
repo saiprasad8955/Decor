@@ -35,6 +35,10 @@ mongoose
   .catch((err) => console.error("MongoDB connection error:", err));
 
 // Routes
+app.use(express.static(path.resolve(path.dirname(__filename), "client/build")));
+app.get("/*", function (req, res) {
+  res.sendFile(path.resolve(path.dirname(__filename), "client/build/index.html"));
+});
 app.use("/auth", authRoutes);
 
 app.use("/user/me", verifyToken, (req, res) => {
@@ -44,12 +48,6 @@ app.use("/user/me", verifyToken, (req, res) => {
 app.use("/item", verifyToken, itemRoutes);
 app.use("/customer", verifyToken, customerRoutes);
 app.use("/invoice", verifyToken, invoiceRoutes);
-
-// For static website
-app.use(express.static(path.resolve(path.dirname(__filename), "client/build")));
-app.get("/client", function (req, res) {
-  res.sendFile(path.resolve(path.dirname(__filename), "client/build/index.html"));
-});
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
