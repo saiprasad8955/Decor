@@ -20,6 +20,7 @@
   "homepage": "https://github.com/saiprasad8955/Decor#readme",
   "description": "",
   "dependencies": {
+    "@sparticuz/chromium": "^133.0.0",
     "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
@@ -28,6 +29,7 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.13.2",
     "nodemon": "^3.1.9",
-    "puppeteer": "^24.8.2"
+    "puppeteer": "^24.8.2",
+    "puppeteer-core": "^24.8.2"
   }
 }

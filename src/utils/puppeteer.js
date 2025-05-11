@@ -1,7 +1,8 @@
 const hbs = require("handlebars");
 const fs = require("fs");
 const path = require("path");
-const puppeteer = require("puppeteer");
+const puppeteer = require('puppeteer-core');
+const chromium = require('@sparticuz/chromium');
 const getInvoiceData = require("./hbs-preview-generator");
 
 async function generateInvoicePDF(invoiceId) {
@@ -15,8 +16,10 @@ async function generateInvoicePDF(invoiceId) {
 
   // Launch Puppeteer
   const browser = await puppeteer.launch({
-    headless: true,
-    args: ["--no-sandbox", "--disable-setuid-sandbox"], // important for production env like Vercel
+    args: chromium.args,
+    defaultViewport: chromium.defaultViewport,
+    executablePath: await chromium.executablePath(), // chromium will resolve the path
+    headless: chromium.headless,
   });
 
   const page = await browser.newPage();
