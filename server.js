@@ -3,7 +3,6 @@ const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const cors = require("cors");
-const path = require("path");
 const itemRoutes = require("./src/routes/itemRoutes");
 const invoiceRoutes = require("./src/routes/invoiceRoutes");
 const customerRoutes = require("./src/routes/customerRoutes");
@@ -44,12 +43,6 @@ app.use("/user/me", verifyToken, (req, res) => {
 app.use("/item", verifyToken, itemRoutes);
 app.use("/customer", verifyToken, customerRoutes);
 app.use("/invoice", verifyToken, invoiceRoutes);
-
-app.use(express.static(path.resolve(path.dirname(__filename), "client/build")));
-app.get("/", function (req, res) {
-  res.sendFile(path.resolve(path.dirname(__filename), "client/build/index.html"));
-});
-// For static website
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

@@ -1,6 +1,7 @@
 const express = require("express");
 const Invoice = require("../models/invoice");
-const Item = require("../models/item");  // Import Item model
+const Item = require("../models/item");
+const { generateInvoicePDF } = require('../utils/puppeteer')
 
 const router = express.Router();
 
@@ -94,6 +95,21 @@ router.delete("/delete/:id", async (req, res) => {
   } catch (error) {
     console.error("Error deleting invoice:", error);
     res.status(500).json({ error: error.message });
+  }
+});
+
+router.get("/invoicePdf/:id", async (req, res) => {
+  try {
+
+    const pdfBuffer = await generateInvoicePDF(req.params.id);
+    res.set({
+      "Content-Type": "application/pdf",
+      "Content-Disposition": "attachment; filename=invoice.pdf",
+    });
+    res.send(pdfBuffer);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error generating PDF");
   }
 });
 
