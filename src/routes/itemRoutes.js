@@ -1,6 +1,7 @@
 // File: routes/itemRoutes.js
 const express = require("express");
 const Item = require("../models/item");
+const Invoice = require("../models/invoice");
 
 const router = express.Router();
 
@@ -11,6 +12,17 @@ router.get("/list", async (req, res) => {
 
 router.post("/add", async (req, res) => {
   try {
+    const existingItem = await Item.findOne({
+      item_name: { $regex: `^${req.body.item_name}$`, $options: "i" },
+      isDeleted: false,
+    });
+
+    if (existingItem) {
+      return res
+        .status(400)
+        .json({ error: "Item name must be unique. This name already exists." });
+    }
+
     const item = { ...req.body, remaining_quantity: req.body.quantity };
     const newItem = new Item(item);
     await newItem.save();
@@ -48,6 +60,20 @@ router.put("/update/:id", async (req, res) => {
     const itemInDb = await Item.findById(itemId);
     if (!itemInDb) {
       return res.json({ error: "Item not found!" });
+    }
+
+    // Case-insensitive uniqueness check (excluding current item)
+    const existingItemWithSameName = await Item.findOne({
+      _id: { $ne: itemId },
+      item_name: { $regex: `^${item_name}$`, $options: "i" },
+      isDeleted: false,
+    });
+
+    if (existingItemWithSameName) {
+      return res.status(400).json({
+        error:
+          "Item name must be unique (case-insensitive). This name already exists.",
+      });
     }
 
     if (quantity < itemInDb.sold_quantity) {
@@ -111,24 +137,37 @@ router.put("/update/:id", async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
-     
 
 router.delete("/delete/:id", async (req, res) => {
   try {
     const itemId = req.params.id;
+
+    // Check if item exists in any active invoice
+    const isUsedInInvoice = await Invoice.exists({
+      "items.item": itemId,
+      isDeleted: false,
+    });
+
+    if (isUsedInInvoice) {
+      return res.status(400).json({
+        error: "Cannot delete this item. It is used in active invoices.",
+      });
+    }
+
+    // Soft delete the item
     const item = await Item.findByIdAndUpdate(
-      { _id: itemId },
-      {
-        $set: { isDeleted: true },
-      },
+      itemId,
+      { $set: { isDeleted: true } },
       { new: true }
     );
 
     if (!item) {
-      return res.json({ error: "Item not found or may be deleted." });
+      return res
+        .status(404)
+        .json({ error: "Item not found or may be deleted." });
     }
 
-    res.status(200).json({ message: "Item deleted" });
+    res.status(200).json({ message: "Item deleted successfully." });
   } catch (error) {
     console.error("Error deleting item:", error);
     res.status(500).json({ error: error.message });

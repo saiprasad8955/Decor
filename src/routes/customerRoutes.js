@@ -10,6 +10,17 @@ router.get("/list", async (req, res) => {
 
 router.post("/add", async (req, res) => {
   try {
+    const existingCustomer = await Customer.findOne({
+      name: { $regex: `^${req.body.name}$`, $options: "i" },
+      isDeleted: false,
+    });
+
+    if (existingCustomer) {
+      return res.status(400).json({
+        error: "Customer name must be unique. This name already exists.",
+      });
+    }
+
     const newCustomer = new Customer(req.body);
     await newCustomer.save();
     res.status(201).json(newCustomer);
@@ -32,6 +43,18 @@ router.put("/update/:id", async (req, res) => {
 
     if (!customer) {
       return res.json({ error: "Customer not found!" });
+    }
+    // Check if another item (with different _id) has same item_name
+    const existingCustomerWithSameName = await Customer.findOne({
+      name: { $regex: `^${name}$`, $options: "i" },
+      _id: { $ne: customerId },
+      isDeleted: false,
+    });
+
+    if (existingCustomerWithSameName) {
+      return res.status(400).json({
+        error: "Customer name must be unique. This name already exists.",
+      });
     }
 
     const newCustomer = await Customer.findOneAndUpdate(
@@ -69,4 +92,4 @@ router.delete("/delete/:id", async (req, res) => {
   }
 });
 
-module.exports = router
+module.exports = router;

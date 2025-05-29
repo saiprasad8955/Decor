@@ -5,7 +5,7 @@ const itemSchema = new mongoose.Schema({
   item_name: { type: String, required: true },
   item_type: { type: String, enum: ["PRODUCT", "SERVICE"], required: true },
   sku: String,
-  part_number: Number,
+  part_number: String,
   status: { type: Boolean, default: true },
   description: String,
   category: String,
