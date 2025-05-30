@@ -4,8 +4,26 @@ const Customer = require("../models/customer");
 const router = express.Router();
 
 router.get("/list", async (req, res) => {
-  const customers = await Customer.find({ isDeleted: false });
-  res.json(customers);
+  try {
+    const page = parseInt(req.query.page) || 1; // Default to page 1
+    const limit = parseInt(req.query.limit) || 10; // Default to 10 items per page
+    const skip = (page - 1) * limit;
+
+    const [customers, total] = await Promise.all([
+      Customer.find({ isDeleted: false }).skip(skip).limit(limit),
+      Customer.countDocuments({ isDeleted: false }),
+    ]);
+    console.log("customers are calling");
+    res.json({
+      data: customers,
+      total,
+      page,
+      totalPages: Math.ceil(total / limit),
+    });
+  } catch (err) {
+    console.error("Failed to fetch customers:", err);
+    res.status(500).json({ error: "Server error" });
+  }
 });
 
 router.post("/add", async (req, res) => {

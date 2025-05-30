@@ -6,8 +6,21 @@ const Invoice = require("../models/invoice");
 const router = express.Router();
 
 router.get("/list", async (req, res) => {
-  const items = await Item.find({ isDeleted: false });
-  res.status(200).json(items);
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const skip = (page - 1) * limit;
+
+  const [items, total] = await Promise.all([
+    Item.find({ isDeleted: false }).skip(skip).limit(limit),
+    Item.countDocuments({ isDeleted: false }),
+  ]);
+
+  res.json({
+    data: items,
+    total,
+    page,
+    totalPages: Math.ceil(total / limit),
+  });
 });
 
 router.post("/add", async (req, res) => {

@@ -7,10 +7,30 @@ const { generateInvoicePDF } = require("../utils/puppeteer");
 const router = express.Router();
 
 router.get("/list", async (req, res) => {
-  const invoices = await Invoice.find({ isDeleted: false }).populate(
-    "customerId items.item"
-  );
-  res.json(invoices);
+  try {
+    const page = parseInt(req.query.page) || 1; // Current page
+    const limit = parseInt(req.query.limit) || 10; // Items per page
+    const skip = (page - 1) * limit;
+
+    // Get total count for pagination
+    const totalCount = await Invoice.countDocuments({ isDeleted: false });
+
+    // Get paginated data
+    const invoices = await Invoice.find({ isDeleted: false })
+      .skip(skip)
+      .limit(limit)
+      .populate("customerId items.item");
+
+    res.json({
+      data: invoices,
+      total: totalCount,
+      page,
+      totalPages: Math.ceil(totalCount / limit),
+    });
+  } catch (err) {
+    console.error("Error fetching invoices:", err);
+    res.status(500).json({ error: "Failed to fetch invoices" });
+  }
 });
 
 router.post("/add", async (req, res) => {
@@ -47,8 +67,13 @@ router.post("/add", async (req, res) => {
       }
     }
 
-    // Save invoice
-    const invoice = new Invoice(req.body);
+    // Generate invoice number based on count of existing active invoices
+    const activeInvoiceCount = await Invoice.countDocuments({
+      isDeleted: false,
+    });
+    const invoiceNumber = `INVOICE - ${activeInvoiceCount + 1}`;
+
+    const invoice = new Invoice({ ...req.body, invoice_number: invoiceNumber });
     await invoice.save({ session });
 
     // Recalculate sold and remaining quantities

@@ -2,6 +2,7 @@
 const mongoose = require("mongoose");
 
 const invoiceSchema = new mongoose.Schema({
+  invoice_number: { type: String, unique: true },
   customerId: { type: mongoose.Schema.Types.ObjectId, ref: "Customer" },
   sales_person: String,
   invoice_date: Date,
