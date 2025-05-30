@@ -13,7 +13,6 @@ router.get("/list", async (req, res) => {
       Customer.find({ isDeleted: false }).skip(skip).limit(limit),
       Customer.countDocuments({ isDeleted: false }),
     ]);
-    console.log("customers are calling");
     res.json({
       data: customers,
       total,
