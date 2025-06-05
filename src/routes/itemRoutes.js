@@ -39,10 +39,10 @@ router.post("/add", async (req, res) => {
     const item = { ...req.body, remaining_quantity: req.body.quantity };
     const newItem = new Item(item);
     await newItem.save();
-    res.status(201).json(newItem);
+    res.status(201).send(newItem);
   } catch (error) {
     console.error("Error adding item:", error);
-    res.status(500).json({ error: error.message });
+    res.status(500).send({ error: error.message });
   }
 });
 
@@ -51,7 +51,7 @@ router.put("/update/:id", async (req, res) => {
     const itemId = req.params.id;
 
     if (Object.keys(req.body).length === 0) {
-      return res.json({ error: "Please enter data to update!" });
+      return res.send({ error: "Please enter data to update!" });
     }
 
     const {
@@ -75,24 +75,10 @@ router.put("/update/:id", async (req, res) => {
       return res.json({ error: "Item not found!" });
     }
 
-    // Case-insensitive uniqueness check (excluding current item)
-    const existingItemWithSameName = await Item.findOne({
-      _id: { $ne: itemId },
-      item_name: { $regex: `^${item_name}$`, $options: "i" },
-      isDeleted: false,
-    });
-
-    if (existingItemWithSameName) {
-      return res.status(400).json({
-        error:
-          "Item name must be unique (case-insensitive). This name already exists.",
-      });
-    }
-
     if (quantity < itemInDb.sold_quantity) {
       return res
         .status(400)
-        .json({ error: "Quantity cannot be less than sold quantity!" });
+        .send({ error: "Quantity cannot be less than sold quantity!" });
     }
 
     let remaining_quantity = itemInDb.remaining_quantity;
@@ -115,7 +101,7 @@ router.put("/update/:id", async (req, res) => {
     ) {
       return res
         .status(400)
-        .json({ error: "Please enter all required fields!" });
+        .send({ error: "Please enter all required fields!" });
     }
 
     const updatedItem = await Item.findByIdAndUpdate(
@@ -141,13 +127,13 @@ router.put("/update/:id", async (req, res) => {
     );
 
     if (!updatedItem) {
-      return res.json({ error: "Item not found!" });
+      return res.send({ error: "Item not found!" });
     }
 
-    res.status(200).json(updatedItem);
+    res.status(200).send(updatedItem);
   } catch (error) {
     console.error("Error updating item:", error);
-    res.status(500).json({ error: error.message });
+    res.status(500).send({ error: error.message });
   }
 });
 
@@ -162,7 +148,7 @@ router.delete("/delete/:id", async (req, res) => {
     });
 
     if (isUsedInInvoice) {
-      return res.status(400).json({
+      return res.status(400).send({
         error: "Cannot delete this item. It is used in active invoices.",
       });
     }
@@ -175,15 +161,13 @@ router.delete("/delete/:id", async (req, res) => {
     );
 
     if (!item) {
-      return res
-        .status(404)
-        .json({ error: "Item not found or may be deleted." });
+      return res.send({ error: "Item not found or may be deleted." });
     }
 
-    res.status(200).json({ message: "Item deleted successfully." });
+    res.status(200).send({ message: "Item deleted" });
   } catch (error) {
     console.error("Error deleting item:", error);
-    res.status(500).json({ error: error.message });
+    res.status(500).send({ error: error.message });
   }
 });
 

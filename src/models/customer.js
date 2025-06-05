@@ -10,6 +10,7 @@ const customerSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  user_id: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
 });
 
 module.exports = mongoose.model('Customer', customerSchema);

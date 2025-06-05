@@ -29,7 +29,7 @@ router.get("/list", async (req, res) => {
     });
   } catch (err) {
     console.error("Error fetching invoices:", err);
-    res.status(500).json({ error: "Failed to fetch invoices" });
+    res.status(500).send({ error: "Failed to fetch invoices" });
   }
 });
 
@@ -109,7 +109,7 @@ router.post("/add", async (req, res) => {
   } catch (error) {
     await session.abortTransaction();
     console.error("Error adding invoice:", error);
-    res.status(400).json({ error: error.message });
+    res.status(400).send({ error: error.message });
   } finally {
     session.endSession();
   }
@@ -124,13 +124,13 @@ router.put("/update/:id", async (req, res) => {
 
     if (Object.keys(req.body).length === 0) {
       await session.abortTransaction();
-      return res.status(400).json({ error: "Please enter data to update!" });
+      return res.status(400).send({ error: "Please enter data to update!" });
     }
 
     const originalInvoice = await Invoice.findById(invoiceId).session(session);
     if (!originalInvoice) {
       await session.abortTransaction();
-      return res.status(404).json({ error: "Invoice not found!" });
+      return res.status(404).send({ error: "Invoice not found!" });
     }
 
     const updatedInvoice = await Invoice.findOneAndUpdate(
@@ -184,7 +184,7 @@ router.put("/update/:id", async (req, res) => {
   } catch (error) {
     await session.abortTransaction();
     console.error("Error updating invoice:", error);
-    res.status(500).json({ error: error.message });
+    res.status(500).send({ error: error.message });
   } finally {
     session.endSession();
   }
@@ -252,7 +252,7 @@ router.delete("/delete/:id", async (req, res) => {
   } catch (error) {
     await session.abortTransaction();
     console.error("Error deleting invoice:", error);
-    res.status(500).json({ error: error.message });
+    res.status(500).send({ error: error.message });
   } finally {
     session.endSession();
   }

@@ -17,6 +17,7 @@ const itemSchema = new mongoose.Schema({
   sold_quantity: { type: Number, default: 0 },
   remaining_quantity: { type: Number, default: 0 },
   isDeleted: { type: Boolean, default: false },
+  user_id: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
 });
 
 module.exports = mongoose.model('Item', itemSchema);

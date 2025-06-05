@@ -21,6 +21,7 @@ const invoiceSchema = new mongoose.Schema({
   subtotal: Number,
   final_amount: Number,
   isDeleted: { type: Boolean, default: false },
+  user_id: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
 });
 
 module.exports = mongoose.model('Invoice', invoiceSchema);
