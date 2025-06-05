@@ -85,25 +85,7 @@ router.put("/update/:id", async (req, res) => {
     if (itemInDb.quantity != quantity) {
       remaining_quantity = quantity - itemInDb.sold_quantity;
     }
-
-    if (
-      !item_name ||
-      !item_type ||
-      !sku ||
-      !part_number ||
-      !description ||
-      !category ||
-      !brand_name ||
-      !tax ||
-      !cost_price ||
-      !selling_price ||
-      !quantity
-    ) {
-      return res
-        .status(400)
-        .send({ error: "Please enter all required fields!" });
-    }
-
+    
     const updatedItem = await Item.findByIdAndUpdate(
       itemId,
       {
