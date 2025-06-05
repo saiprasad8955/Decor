@@ -1,7 +1,5 @@
 const express = require("express");
 const router = express.Router();
-const Invoice = require("../models/Invoice");
-const Item = require("../models/Item");
 
 // 1. Total Sales Today
 router.get("/sales/today", async (req, res) => {
