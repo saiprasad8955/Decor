@@ -16,10 +16,15 @@ async function generateInvoicePDF(invoiceId) {
 
   // Launch Puppeteer
   const browser = await puppeteer.launch({
-    args: [...chromium.args, '--allow-file-access-from-files'],
-    defaultViewport: chromium.defaultViewport,
-    executablePath: await chromium.executablePath(), // chromium will resolve the path
-    headless: chromium.headless,
+  args: [
+    ...chromium.args,
+    '--allow-file-access-from-files',
+    '--disable-web-security',
+    '--disable-features=IsolateOrigins,site-per-process',
+  ], 
+  defaultViewport: chromium.defaultViewport,
+  executablePath: await chromium.executablePath(), // chromium will resolve the path
+  headless: chromium.headless,
   });
 
   const page = await browser.newPage();

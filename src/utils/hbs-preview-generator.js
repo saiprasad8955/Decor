@@ -1,5 +1,6 @@
 const Invoice = require("../models/invoice");
 const path = require("path");
+const fs = require("fs");
 
 async function getInvoiceData(invoiceId) {
   const invoice = await Invoice.findById(invoiceId)
@@ -10,9 +11,12 @@ async function getInvoiceData(invoiceId) {
   if (!invoice) throw new Error("Invoice not found");
 
   // Transform invoice to match the HBS template structure
-  console.log(invoice.items)
-  const data = {
-    logoPath: `file://${path.join(__dirname, "logo_single.png").replace(/\\/g, "/")}`,
+  const logoFile = path.join(__dirname, "logo_single.png");
+  const logoBase64 = fs.readFileSync(logoFile, { encoding: "base64" });
+  const logoDataUri = `data:image/png;base64,${logoBase64}`;
+
+const data = {
+    logoPath: logoDataUri,
     customer: invoice.customerId.name,
     invoiceDate: invoice.invoice_date.toISOString().split("T")[0],
     deliveryDate: invoice.delivery_date.toISOString().split("T")[0],
