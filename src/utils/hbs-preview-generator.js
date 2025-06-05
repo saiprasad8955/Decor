@@ -1,4 +1,5 @@
 const Invoice = require("../models/invoice");
+const path = require("path");
 
 async function getInvoiceData(invoiceId) {
   const invoice = await Invoice.findById(invoiceId)
