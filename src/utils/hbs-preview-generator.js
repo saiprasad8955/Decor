@@ -12,7 +12,7 @@ async function getInvoiceData(invoiceId) {
   // Transform invoice to match the HBS template structure
   console.log(invoice.items)
   const data = {
-    logoPath: `file://${path.join(__dirname, "logo_single.png")}`,
+    logoPath: `file://${path.join(__dirname, "logo_single.png").replace(/\\/g, "/")}`,
     customer: invoice.customerId.name,
     invoiceDate: invoice.invoice_date.toISOString().split("T")[0],
     deliveryDate: invoice.delivery_date.toISOString().split("T")[0],
