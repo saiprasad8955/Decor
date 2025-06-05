@@ -18,6 +18,7 @@ async function getInvoiceData(invoiceId) {
 const data = {
     logoPath: logoDataUri,
     customer: invoice.customerId.name,
+    invoiceNumber: invoice.invoice_number,
     invoiceDate: invoice.invoice_date.toISOString().split("T")[0],
     deliveryDate: invoice.delivery_date.toISOString().split("T")[0],
     description: invoice.description,
