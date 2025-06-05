@@ -11,7 +11,7 @@ router.get("/list", async (req, res) => {
   const skip = (page - 1) * limit;
 
   const [items, total] = await Promise.all([
-    Item.find({ isDeleted: false }).skip(skip).limit(limit),
+    Item.find({ isDeleted: false, user_id: req.user._id }).skip(skip).limit(limit),
     Item.countDocuments({ isDeleted: false }),
   ]);
 
@@ -36,7 +36,7 @@ router.post("/add", async (req, res) => {
         .json({ error: "Item name must be unique. This name already exists." });
     }
 
-    const item = { ...req.body, remaining_quantity: req.body.quantity };
+    const item = { ...req.body, remaining_quantity: req.body.quantity, user_id: req.user._id };
     const newItem = new Item(item);
     await newItem.save();
     res.status(201).send(newItem);

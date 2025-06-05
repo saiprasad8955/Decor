@@ -10,7 +10,7 @@ router.get("/list", async (req, res) => {
     const skip = (page - 1) * limit;
 
     const [customers, total] = await Promise.all([
-      Customer.find({ isDeleted: false }).skip(skip).limit(limit),
+      Customer.find({ isDeleted: false, user_id: req.user._id }).skip(skip).limit(limit),
       Customer.countDocuments({ isDeleted: false }),
     ]);
     res.json({
@@ -38,7 +38,7 @@ router.post("/add", async (req, res) => {
       });
     }
 
-    const newCustomer = new Customer(req.body);
+    const newCustomer = new Customer({ ...req.body, user_id: req.user._id });
     await newCustomer.save();
     res.status(201).send(newCustomer);
   } catch (error) {

@@ -16,7 +16,7 @@ router.get("/list", async (req, res) => {
     const totalCount = await Invoice.countDocuments({ isDeleted: false });
 
     // Get paginated data
-    const invoices = await Invoice.find({ isDeleted: false })
+    const invoices = await Invoice.find({ isDeleted: false, user_id: req.user._id })
       .skip(skip)
       .limit(limit)
       .populate("customerId items.item");
@@ -73,7 +73,7 @@ router.post("/add", async (req, res) => {
     });
     const invoiceNumber = `INVOICE - ${activeInvoiceCount + 1}`;
 
-    const invoice = new Invoice({ ...req.body, invoice_number: invoiceNumber });
+    const invoice = new Invoice({ ...req.body, invoice_number: invoiceNumber, user_id: req.user._id });
     await invoice.save({ session });
 
     // Recalculate sold and remaining quantities
